@@ -641,7 +641,7 @@ body.nav-open .nav-toggle span:nth-child(3){ top:22px; transform:rotate(-45deg);
   top: -5%;
   object-fit: cover;
   object-position: 70% 50%;
-  animation: hero-drift 30s ease-in-out infinite alternate;
+  animation: hero-drift 60s ease-in-out infinite alternate;
   will-change: transform;
 }
 
@@ -660,7 +660,7 @@ body.nav-open .nav-toggle span:nth-child(3){ top:22px; transform:rotate(-45deg);
   .hero-media img {
     width: 150%;
     height: 110%;
-    animation:hero-drift 30s  linear infinite;
+    animation:hero-drift 60s  linear infinite;
   }
 
   @keyframes hero-drift-mobile {
