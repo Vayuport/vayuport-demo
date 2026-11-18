@@ -611,38 +611,46 @@ body.nav-open .nav-toggle span:nth-child(3){ top:22px; transform:rotate(-45deg);
    ========================================================= */
 
 .hero {
-  position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  overflow: hidden;
-  isolation: isolate;
+ position:relative;
+  min-height:100vh;
+  min-height:100svh;
+  display:flex;               /* needed so align-items works */
+  align-items:center;
+  overflow:hidden;
+  isolation:isolate;
 }
 
 .hero-media {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  overflow:hidden;
+  background:var(--c-950);
+
+   /* pan settings (desktop) */
+  --pan-w:135%;               /* image box width vs hero */
+  --pan-from:-25.93%;         /* = -(w-100)/w, so the right edge exactly meets the hero edge */
+  --pan-pos:60% 50%;
+  --pan-dur:20s;
 }
 
 .hero-media .parallax {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+   position:absolute;
+  left:0; right:0;
+  top:-6%; bottom:-6%;
 }
-
-.hero-media img {
-  position: absolute;
-  width: 110%;
-  height: 110%;
-  max-width: none;
-  left: 0;
-  top: -5%;
-  object-fit: cover;
-  object-position: 70% 50%;
-  animation: hero-drift 60s ease-in-out infinite alternate;
-  will-change: transform;
+.hero-media picture{ display:block; width:100%; height:100%; }
+.hero-media .hero-img {
+  position:absolute;
+  top:0; left:0;
+  width:var(--pan-w);
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+  object-position:var(--pan-pos);
+  transform:translate3d(var(--pan-from),0,0);
+  animation:hero-pan var(--pan-dur) ease-in-out infinite alternate;
+  will-change:transform;
 }
 
 /* Desktop image movement */
@@ -653,6 +661,28 @@ body.nav-open .nav-toggle span:nth-child(3){ top:22px; transform:rotate(-45deg);
   to {
     transform: translate3d(30%, 0, 0) scale(1.04);
   }
+}
+@keyframes hero-pan{
+  from{ transform:translate3d(var(--pan-from),0,0); }
+  to  { transform:translate3d(0,0,0); }
+}
+
+/* tablet */
+@media (max-width:1023.98px){
+  .hero-media{ --pan-w:240%; --pan-from:-58.33%; --pan-pos:62% 50%; --pan-dur:20s; }
+}
+/* phone */
+@media (max-width:767.98px){
+  .hero-media{ --pan-w:300%; --pan-from:-66.67%; --pan-pos:60% 40%; --pan-dur:18s; }
+  .hero{ align-items:flex-end; }
+}
+/* very wide, short screens */
+@media (min-width:1024px) and (min-aspect-ratio:16/9){
+  .hero-media{ --pan-w:125%; --pan-from:-20%; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-media .hero-img{ animation:none; transform:translate3d(0,0,0); }
 }
 
 /* Mobile image movement */
@@ -719,6 +749,51 @@ body.nav-open .nav-toggle span:nth-child(3){ top:22px; transform:rotate(-45deg);
 @media (max-width:767.98px){
   .hero{ align-items:flex-end; }
   .hero-media img{ object-position:50% 38%; }
+  .hero-media{
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  overflow:hidden;
+  background:var(--c-950);
+}
+.hero-media .parallax{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.hero-media picture{ display:block; width:100%; height:100%; }
+.hero-media img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;                 /* always fills, never shows black */
+  object-position:70% 50%;
+  transform-origin:70% 50%;         /* zoom toward the aircraft */
+  animation:hero-zoom 28s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes hero-zoom{
+  from{ transform:scale(1); }
+  to  { transform:scale(1.14); }    /* scale >= 1 around an inside origin = no gaps */
+}
+
+@media (max-width:767.98px){
+  .hero-media img{
+    object-position:50% 38%;
+    transform-origin:50% 38%;
+  }
+  @keyframes hero-zoom{
+    from{ transform:scale(1); }
+    to  { transform:scale(1.18); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-media img{ animation:none; transform:none; }
+}
   .hero-overlay{
     background:linear-gradient(180deg, rgba(20,20,22,.5) 0%, rgba(20,20,22,.05) 28%, rgba(20,20,22,.55) 52%, rgba(20,20,22,.97) 78%);
   }
@@ -1671,4 +1746,70 @@ section{ position:relative; }
     position:static; max-width:none;
     padding:1.6rem var(--gutter) clamp(3rem, 8vw, 4rem);
   }
+}
+/* ---------- Use case video ---------- */
+/* ================= Use case video ================= */
+.video-frame{
+  position:relative;
+  width:100%;
+  max-width:1080px;
+  margin-inline:auto;
+  aspect-ratio:16/9;
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:#000;
+  border:1px solid var(--c-line);
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.7);
+}
+.video-frame video{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:contain;
+  background:#000;
+}
+@media (max-width:600px){
+  .video-frame{ border-radius:10px; }
+}
+
+/* ================= Responsive refinements ================= */
+
+/* mega menu: 2 columns on smaller desktops */
+@media (min-width:1080px) and (max-width:1239.98px){
+  .mega{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+}
+
+/* 3D showcase: taller on tablet and phone, and a minimum height on desktop */
+@media (min-width:861px){
+  .model-frame{ min-height:480px; }
+}
+@media (max-width:860px){
+  .model-media{ aspect-ratio:4/3; }
+}
+@media (max-width:560px){
+  .model-media{ aspect-ratio:1/1; }
+  .model-3d-mount canvas.evtol-3d{ object-fit:cover; }
+}
+
+/* very small phones */
+@media (max-width:380px){
+  .hero h1{ font-size:2rem; }
+  .page-hero h1{ font-size:1.9rem; }
+  .h-section{ font-size:1.65rem; }
+  .btn{ padding:.9rem 1.2rem; font-size:.9rem; }
+}
+
+/* landscape phones: keep hero text clear of the bottom info bar */
+@media (max-height:520px) and (orientation:landscape){
+  .hero-meta{ display:none; }
+  .hero-content{ padding-block:calc(var(--nav-h) + 1rem) 2rem; }
+  .hero h1{ font-size:clamp(1.8rem, 5vw, 2.6rem); }
+}
+
+/* focus ring when the skip link moves focus to <main> */
+main:focus{ outline:none; }
+
+/* lighter motion on touch devices */
+@media (hover:none){
+  .sol-card:hover .sol-card-media img,
+  .app-card:hover .media-frame img{ transform:none; }
 }
